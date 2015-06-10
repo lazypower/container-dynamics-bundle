@@ -1,92 +1,55 @@
 container-dynamics:
   series: trusty
   services:
-    disco:
-      charm: "local:trusty/docker-compose-5"
-      options:
-        path: disco
-      annotations:
-        "gui-x": "1865.499755859375"
-        "gui-y": "1041.25"
-    opsview:
-      charm: "local:trusty/docker-compose-3"
-      options:
-        path: opsview
-      annotations:
-        "gui-x": "1581.499755859375"
-        "gui-y": "1131"
-    consul:
-      charm: "local:trusty/consul-0"
+    'consul':
+      charm: local:trusty/consul
       num_units: 1
+      to: ['docker']
       options:
-        "bootstrap-expect": 1
-      expose: true
-      annotations:
-        "gui-x": "1055.5"
-        "gui-y": "270.58983848622455"
-      to:
-        - "0"
-    sentry:
-      charm: "local:trusty/docker-compose-2"
-      options:
-        path: sentry
-      annotations:
-        "gui-x": "1568.5"
-        "gui-y": "722.8398690038027"
-    "twenty-fourty-eight":
-      charm: "local:trusty/docker-compose-1"
-      options:
-        path: "2048"
-      annotations:
-        "gui-x": "1571.5"
-        "gui-y": "924.5898690038027"
-    docker:
-      charm: "local:trusty/docker-0"
+        bootstrap-expect: 1
+    'docker':
+      charm: local:trusty/docker
       num_units: 1
       options:
         latest: true
         version: 1.6.2
-      annotations:
-        "gui-x": "1255.5"
-        "gui-y": "927.4101615137754"
-      to:
-        - "0"
-    registrator:
-      charm: "local:trusty/registrator-0"
-      annotations:
-        "gui-x": "1255.5"
-        "gui-y": "617"
-    "nginx-proxy":
-      charm: "local:trusty/nginx-proxy-0"
+    'nginx-proxy':
+      charm: local:trusty/nginx-proxy
       num_units: 1
-      expose: true
-      annotations:
-        "gui-x": "855.5"
-        "gui-y": "617"
-      to:
-        - "1"
-    ttrss:
-      charm: "local:trusty/docker-compose-4"
+    'registrator':
+      charm: local:trusty/registrator
+      num_units: 1
+    'ttrss':
+      charm: local:trusty/docker-compose
+      num_units: 0
       options:
         path: ttrss
-      annotations:
-        "gui-x": "1864.499755859375"
-        "gui-y": "813"
+    'disco':
+      charm: local:trusty/docker-compose
+      num_units: 0
+      options:
+        path: disco
+    'opsview':
+      charm: local:trusty/docker-compose
+      num_units: 0
+      options:
+        path: opsview
+    'sentry':
+      charm: local:trusty/docker-compose
+      num_units: 0
+      options:
+        path: sentry
+    'twenty-fourty-eight':
+      charm: local:trusty/docker-compose
+      num_units: 0
+      options:
+        path: '2048'
   relations:
-    - - "nginx-proxy:template"
-      - "consul:api"
-    - - "ttrss:docker-host"
-      - "docker:juju-info"
-    - - "registrator:consul-api"
-      - "consul:api"
-    - - "twenty-fourty-eight:docker-host"
-      - "docker:juju-info"
-    - - "sentry:docker-host"
-      - "docker:juju-info"
-    - - "disco:docker-host"
-      - "docker:juju-info"
-    - - "registrator:docker-events"
-      - "docker:events"
-    - - "opsview:docker-host"
-      - "docker:juju-info"
-
+    - ["registrator:docker-events", "docker:events"]
+    - ["registrator:consul-api", "consul:api"]
+    - ["nginx-proxy:template", "consul:api"]
+    - ["ttrss:docker-host", "docker:juju-info"]
+    - ["sentry:docker-host", "docker:juju-info"]
+    - ["opsview:docker-host", "docker:juju-info"]
+    - ["disco:docker-host", "docker:juju-info"]
+    - ["twenty-fourty-eight:docker-host", "docker:juju-info"]
